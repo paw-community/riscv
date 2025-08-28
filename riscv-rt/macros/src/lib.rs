@@ -877,7 +877,7 @@ fn trap(
         #start_trap
 
         #[export_name = #export_name]
-        #f
+        extern "riscv-interrupt-m" #f
     )
     .into()
 }

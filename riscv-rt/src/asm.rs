@@ -60,6 +60,7 @@ _start:",
     .dword _abs_start
     .option pop",
     "
+    .section .text.abort
 _abs_start:
     .option norelax
     .cfi_startproc
@@ -189,10 +190,19 @@ _abs_start:
     #[cfg(not(riscvi))]
     "mv a2, a5", // RVE does not include s2, so we use a5 to preserve a2
 }
+    "li t0, 0x1f
+    csrw 0xbc0, t0
+    li t0, 0x3
+    csrw 0x804, t0
+    li t0, 0x88
+    csrw mstatus, t0
+    li t0, 0x3
+    csrw mtvec, t0",
     // INITIALIZE FRAME POINTER AND JUMP TO _start_rust FUNCTION
     "mv s0, sp
     la t0, _start_rust
-    jr t0
+    csrw mepc, t0
+    mret
     .cfi_endproc",
 
     #[cfg(not(feature = "single-hart"))]

@@ -280,7 +280,7 @@ impl PacEnumItem {
         };
         let mut asm = format!(
             r#"
-#[cfg(all(feature = "v-trap", any(target_arch = "riscv32", target_arch = "riscv64")))]
+#[cfg(any(target_arch = "riscv32", target_arch = "riscv64"))]
 core::arch::global_asm!("
     .section .trap.vector, \"ax\"
     .global _vector_table
@@ -292,16 +292,16 @@ core::arch::global_asm!("
     .option norvc
     
     _vector_table:
-        j _start_trap  // Interrupt 0 is used for exceptions
+        // Interrupt 0, 1 are reserved (used by init)
 "#,
         );
 
-        for i in 1..=self.max_number {
+        for i in 2..=self.max_number {
             if let Some(ident) = self.numbers.get(&i) {
-                asm.push_str(&format!("        j _start_{ident}_trap\n"));
+                asm.push_str(&format!("        .long {ident}\n"));
             } else {
                 asm.push_str(&format!(
-                    "        j _start_DefaultHandler_trap // Interrupt {i} is reserved\n"
+                    "        .long DefaultHandler // Interrupt {i} is reserved\n"
                 ));
             }
         }
@@ -366,7 +366,7 @@ core::arch::global_asm!("
             let handlers = self.handlers(&trap_config);
             let interrupt_array = self.handlers_array();
             let cfg_v_trap = match is_core_interrupt {
-                true => Some(quote!(#[cfg(not(feature = "v-trap"))])),
+                true => Some(quote!(#[cfg(false)])),
                 false => None,
             };
 

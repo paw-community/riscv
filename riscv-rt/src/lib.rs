@@ -701,7 +701,6 @@ pub unsafe extern "C" fn start_rust(a0: usize, a1: usize, a2: usize) -> ! {
 
     #[cfg(feature = "post-init")]
     __post_init(a0);
-    _setup_interrupts();
     hal_main(a0, a1, a2);
 }
 
@@ -818,17 +817,11 @@ pub struct TrapFrame {
 #[export_name = "_start_trap_rust"]
 pub unsafe extern "C" fn start_trap_rust(trap_frame: *const TrapFrame) {
     extern "C" {
-        #[cfg(not(feature = "v-trap"))]
-        fn _dispatch_core_interrupt(code: usize);
-        #[cfg(feature = "v-trap")]
         fn DefaultHandler();
         fn _dispatch_exception(trap_frame: &TrapFrame, code: usize);
     }
 
     match xcause::read().cause() {
-        #[cfg(not(feature = "v-trap"))]
-        xcause::Trap::Interrupt(code) => _dispatch_core_interrupt(code),
-        #[cfg(feature = "v-trap")]
         xcause::Trap::Interrupt(_) => DefaultHandler(),
         xcause::Trap::Exception(code) => _dispatch_exception(&*trap_frame, code),
     }

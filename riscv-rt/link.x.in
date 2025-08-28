@@ -98,10 +98,6 @@ SECTIONS
     
     . = ALIGN(4);
     KEEP(*(.trap.vector));   /* for _trap_vector (vectored mode only) */
-    KEEP(*(.trap.start));    /* for _start_trap routine */
-    KEEP(*(.trap.start.*));  /* for _start_INTERRUPT_trap routines (vectored mode only) */
-    KEEP(*(.trap.continue)); /* for _continue_trap routine (vectored mode only) */
-    KEEP(*(.trap.rust));     /* for _start_trap_rust Rust function */
     KEEP(*(.trap .trap.*));  /* Other .trap symbols at the end */
 
     *(.text.abort);

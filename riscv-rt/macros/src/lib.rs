@@ -877,6 +877,7 @@ fn trap(
         #start_trap
 
         #[export_name = #export_name]
+        #[unsafe(link_section = ".highcode")]
         extern "riscv-interrupt-m" #f
     )
     .into()

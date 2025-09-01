@@ -60,7 +60,6 @@ _start:",
     .dword _abs_start
     .option pop",
     "
-    .section .text.abort
 _abs_start:
     .option norelax
     .cfi_startproc
@@ -196,7 +195,8 @@ _abs_start:
     csrw 0x804, t0
     li t0, 0x88
     csrw mstatus, t0
-    li t0, 0x3
+    la t0, _vector_table
+    ori t0, t0, 3
     csrw mtvec, t0",
     // INITIALIZE FRAME POINTER AND JUMP TO _start_rust FUNCTION
     "mv s0, sp

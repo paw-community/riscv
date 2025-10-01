@@ -117,9 +117,13 @@ pub mod mseccfg;
 #[cfg(any(test, target_arch = "riscv32"))]
 pub mod mseccfgh;
 
+// Machine indirect access
+pub mod miselect;
+
 #[cfg(test)]
 mod tests;
 
 // TODO: Debug/Trace Registers (shared with Debug Mode)
 
 // TODO: Debug Mode Registers
+pub mod dcsr;
